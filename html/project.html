@@ -1,0 +1,52 @@
+<DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8"/>
+<title>Time of Sunrise</title>
+<!--<link rel="stylesheet" type="text/css" href="Project.css">-->
+<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src= "http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+</head>
+
+<body>
+
+<div id="title">
+<h1>Time of Sunrise</h1>
+</div>
+
+<div id="h3title">
+<h3>Select Date</h3>
+</div>
+<input type="date">
+
+<div id="h3title">
+<h3>Enter Zip Code<h3>
+</div>
+<input type="text" maxlength="5" value="00000">
+
+<br>
+<br>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<button ng-click="getTime()" id="button" type="button">Get the time of Sunrise!</button>
+<p>{{sentence}} {{time}}</p>
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope){
+    $scope.sentence= "";
+    $scope.time= "";
+    $scope.getTime = function(){
+	$scope.sentence = "The sun will rise at";
+	$scope.time = "6:41 AM";
+    }
+});
+</script>
+
+</body>
+</html>
+
