@@ -2,7 +2,7 @@ var sun = require('./sunPos');
 
 var date = new Date(),
     lat = 40.2,
-    lng = 111.66;
+    lng = -111.66;
 
 var times = sun.getTimes(date, lat, lng, 10);
 
@@ -10,6 +10,11 @@ var times = sun.getTimes(date, lat, lng, 10);
 //   if(time == 'sunrise')
 //	console.log(times[time]);
 //}
+var sunRise = times['sunrise'];
+var dateToString = '' + (sunRise.getHours()+6)%12;
+dateToString += ':' + sunRise.getMinutes();
 
-console.log(times['sunrise']);
+console.log(dateToString);
+console.log(sunRise);
+console.log(date);
 console.log(times['apparentRise']);

@@ -7,6 +7,50 @@
 <!--<link rel="stylesheet" type="text/css" href="Project.css">-->
 <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <script src= "http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  $("#button").click(function(){
+    console.log("button clicked");
+    var timeZoneOffset = new Date().getTimezoneOffset();
+
+    var client = new XMLHttpRequest();
+    console.log($("#zipcode").val());
+    var url1 = "http://api.zippopotam.us/us/" + $("#zipcode").val();
+    client.open("GET", url1, true);
+    client.onreadystatechange = function() {
+	if(client.readyState == 4) {
+	  //alert(client.responseText);
+	  //console.log(client.response);
+	  var parsedRes = JSON.parse(client.response);	
+	  console.log(parsedRes);
+	  var lat = parsedRes.places[0].latitude; 
+	  var lon = parsedRes.places[0].longitude;
+
+	  //this is where finding the angle code should go
+	  var angle = 20;
+
+       	  var url = "http://52.11.78.180:80/gettime";
+       	  var myobj = {Name:"testing",Zip:$("#zipcode").val(),Latitude:lat,Longitude:lon,Angle:angle,Date:$("#date").val(),TimeOffset:timeZoneOffset};
+       	  jobj = JSON.stringify(myobj);
+          console.log(jobj);
+          jQuery.ajax({
+      	    url: url,
+      	    type: "POST",
+      	    data: jobj,
+      	    dataType: "json",
+      	    contentType: "application/json; charset=utf-8",
+      	    success: function(){
+		console.log("button success");
+      	    }
+    	  });
+        };
+    };
+    client.send();
+  });
+});
+</script>
+
 </head>
 
 <body>
@@ -18,12 +62,12 @@
 <div id="h3title">
 <h3>Select Date</h3>
 </div>
-<input type="date">
+<input id="date" type="date">
 
 <div id="h3title">
 <h3>Enter Zip Code<h3>
 </div>
-<input type="text" maxlength="5" value="00000">
+<input id="zipcode" type="text" maxlength="5" value="00000">
 
 <br>
 <br>
@@ -49,7 +93,3 @@ app.controller('myCtrl', function($scope){
 
 </body>
 </html>
-<<<<<<< HEAD
-
-=======
->>>>>>> f7002eef98edb2c705c038df98121dbae083d7cd
