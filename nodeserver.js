@@ -31,10 +31,12 @@ app.post('/gettime',function(req, res) {
 
     //figure out what time sun will rise
     var sun = require('./sunPos');
-    var date = new Date(req.body.Date),  //this is just current date, change to date specified
-        lat = req.body.Latitude,  //this is provo, change to update with zipcode
+    var date = new Date(req.body.Date),
+	zip = req.body.Zip,
+        lat = req.body.Latitude,
         lng = req.body.Longitude,
-	timeOffset = req.body.TimeOffset/60;
+	name = req.body.Name;
+	timeOffset = req.body.TimeOffset/60;	
 
     var times = sun.getTimes(date, lat, lng, angle);
     var sunrise = times['sunrise'];
@@ -46,7 +48,19 @@ app.post('/gettime',function(req, res) {
     appriseTime += ':' + appSunrise.getMinutes();
     console.log(appriseTime);
 
+    //insert into the database
+    var dbObj = {name:name,zip:zip,time:appriseTime,date:date};
+    var MongoClient = require('mongodb').MongoClient;
+    MongoClient.connect("mongodb://localhost/project",function(err,db){
+      if (err) throw err;
+      db.collection("times").insert(dbObj,function(err,records){
+	//console.log(dbObj);
+	//console.log(records[0]);
+	console.log('record added as '+records[0]._id);
+      });
+    });
+
     res.writeHead(200);
-    res.end();
+    res.end(appriseTime);
 });
 app.listen(80);

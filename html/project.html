@@ -26,22 +26,24 @@ $(document).ready(function(){
 	  console.log(parsedRes);
 	  var lat = parsedRes.places[0].latitude; 
 	  var lon = parsedRes.places[0].longitude;
+	  var name = parsedRes.places[0]["place name"];
 
 	  //this is where finding the angle code should go
 	  var angle = 20;
 
        	  var url = "http://52.11.78.180:80/gettime";
-       	  var myobj = {Name:"testing",Zip:$("#zipcode").val(),Latitude:lat,Longitude:lon,Angle:angle,Date:$("#date").val(),TimeOffset:timeZoneOffset};
+       	  var myobj = {Name:name,Zip:$("#zipcode").val(),Latitude:lat,Longitude:lon,Angle:angle,Date:$("#date").val(),TimeOffset:timeZoneOffset};
        	  jobj = JSON.stringify(myobj);
           console.log(jobj);
           jQuery.ajax({
       	    url: url,
       	    type: "POST",
       	    data: jobj,
-      	    dataType: "json",
+      	    //dataType: "json",
       	    contentType: "application/json; charset=utf-8",
-      	    success: function(){
-		console.log("button success");
+      	    success: function(data, textStatus, jqXHR){
+		//alert(data);
+		$("#singleTime").html( "Sun will rise at " + data);
       	    }
     	  });
         };
@@ -74,19 +76,35 @@ $(document).ready(function(){
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
-<button ng-click="getTime()" id="button" type="button">Get the time of Sunrise!</button>
-<p>{{sentence}} {{time}}</p>
+<button id="button">Get Sunrise</button>
+
+<p id="singleTime">Time will appear here </p>
+
+<button ng-click="getTime()" type="button">Show all values in Database</button>
+<p>{{sentence}}</p>
+<p id=time>All times are in your timezone </p>
 
 </div>
 
 <script>
 var app = angular.module('myApp', []);
+var url3 = "http://52.11.78.180/gettime";
 app.controller('myCtrl', function($scope){
     $scope.sentence= "";
     $scope.time= "";
     $scope.getTime = function(){
-	$scope.sentence = "The sun will rise at";
-	$scope.time = "6:41 AM";
+     // $scope.sentence = "The Sun will rise at:";
+      $.getJSON(url3,function(data) {
+	//alert("in the json part");
+	var everything = "";
+	everything += "<ul>";
+	$.each(data, function(i, item) {
+	  everything += "<li>" + data[i].name +" ("+ data[i].zip + ")- The sun will appear to rise at: " + data[i].time;
+	  everything += " on " + data[i].date.substring(0,10); // +"/" + data[i].date.getDate() + "/" + data[i].date.getFullYear() + " <br /> ";
+	});
+	everything += "</ul>";
+	$("#time").html(everything);
+    });
     }
 });
 </script>
